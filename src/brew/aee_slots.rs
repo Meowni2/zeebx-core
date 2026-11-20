@@ -1254,11 +1254,17 @@ pub const TYPEFACE: &[&str] = &["AddRef", "Release", "slot2", "slot3", "CriarFon
 
 /// Methods of `IFont` — the system's bitmap font.
 ///
-/// The order is that of the six `#define`s in `AEEFont.h`:
+/// The order is that of `INHERIT_IFont` in `inc/AEEIFont.h` (BREW 4.0.2):
 ///
 /// ```text
-/// AddRef(0)  Release(1)  QueryInterface(2)  DrawText(3)  GetInfo(4)  MeasureText(5)
+/// AddRef(0)  Release(1)  QueryInterface(2)  DrawText(3)  MeasureText(4)  GetInfo(5)
 /// ```
+///
+/// It used to have 4 and 5 the other way round, taken from the six `#define`s of
+/// `sdk/inc/AEEFont.h` — which are aliases (`IFONT_GetInfo` → `IFont_GetInfo`) **in alphabetical
+/// order**, not the vtable. `tools/check_sdk_slots.py` caught it. No game was hurt by it: Double
+/// Dragon, Resident Evil 4 and Devil May Cry create the fonts and, in 90 seconds through their
+/// menus, never call `GetInfo`, `MeasureText` or `DrawText`.
 ///
 /// **This is not `ITypeface`**, and the difference is the reason this interface exists:
 /// `ITypeface` creates fonts from a TTF, and `IFont` **already is** the drawable font. Double
@@ -1269,8 +1275,8 @@ pub const FONT: &[&str] = &[
     "Release",
     "QueryInterface",
     "DrawText",
-    "GetInfo",
     "MeasureText",
+    "GetInfo",
 ];
 
 /// Methods of the Z-Wheel's generic list (`0x01028e35`).

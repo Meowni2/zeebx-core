@@ -902,4 +902,22 @@ mod tests {
         assert_eq!(Interface::Applet.method(2), Some("HandleEvent"));
         assert_eq!(Interface::Display.method(7), Some("Update"));
     }
+
+    /// The vtable order of `INHERIT_IFont` in `inc/AEEIFont.h`. The alphabetical `#define`s of
+    /// `AEEFont.h` put `GetInfo` first, and that is how 4 and 5 were swapped here once.
+    #[test]
+    fn the_font_slots_follow_inherit_ifont() {
+        let slots: Vec<_> = (0..6).map(|slot| Interface::Font.method(slot)).collect();
+        assert_eq!(
+            slots,
+            [
+                Some("AddRef"),
+                Some("Release"),
+                Some("QueryInterface"),
+                Some("DrawText"),
+                Some("MeasureText"),
+                Some("GetInfo"),
+            ]
+        );
+    }
 }
